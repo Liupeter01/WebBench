@@ -112,6 +112,7 @@ int main(int argc, char *argv[])
  } 
 
  while((opt=getopt_long(argc,argv,"912Vfrt:p:c:?h",long_options,&options_index))!=EOF )
+ //Five_comment: manual of getopt() http://www.gnu.org/software/libc/manual/html_node/Getopt-Long-Options.html#Getopt-Long-Options
  {
   switch(opt)
   {
@@ -149,19 +150,21 @@ int main(int argc, char *argv[])
    case 'c': clients=atoi(optarg);break;
   }
  }
+ //Five_comment: getopt_long() will reorder the options and move the non-option argvs to the last of argv.
  
  if(optind==argc) {
                       fprintf(stderr,"webbench: Missing URL!\n");
 		      usage();
 		      return 2;
                     }
-
+ //Five_comment: in case user set these option to invalid value. reset them.
  if(clients==0) clients=1;
  if(benchtime==0) benchtime=60;
  /* Copyright */
  fprintf(stderr,"Webbench - Simple Web Benchmark "PROGRAM_VERSION"\n"
 	 "Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.\n"
 	 );
+ //Five_comment: optind will point to the last value in argv.
  build_request(argv[optind]);
  /* print bench info */
  printf("\nBenchmarking: ");
@@ -201,14 +204,17 @@ void build_request(const char *url)
   char tmp[10];
   int i;
 
+  //Five_comment: same as memset bytes to sezo('\0')
   bzero(host,MAXHOSTNAMELEN);
   bzero(request,REQUEST_SIZE);
 
+  //setting http version
   if(force_reload && proxyhost!=NULL && http10<1) http10=1;
   if(method==METHOD_HEAD && http10<1) http10=1;
   if(method==METHOD_OPTIONS && http10<2) http10=2;
   if(method==METHOD_TRACE && http10<2) http10=2;
 
+  //value of method is set while handling the long_options
   switch(method)
   {
 	  default:
@@ -220,6 +226,7 @@ void build_request(const char *url)
 		  
   strcat(request," ");
 
+  //Five_comment: strstr return the first place of "://" in url
   if(NULL==strstr(url,"://"))
   {
 	  fprintf(stderr, "\n%s: is not a valid URL.\n",url);
@@ -231,7 +238,7 @@ void build_request(const char *url)
 	 exit(2);
   }
   if(proxyhost==NULL)
-	   if (0!=strncasecmp("http://",url,7)) 
+	   if (0!=strncasecmp("http://",url,7)) //Five_comment: only http is supported.
 	   { fprintf(stderr,"\nOnly HTTP protocol is directly supported, set --proxy for others.\n");
              exit(2);
            }
