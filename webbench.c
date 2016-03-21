@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
  }
  //Five_comment: getopt_long() will reorder the options and move the non-option argvs to the last of argv.
  
- if(optind==argc) {
+ if(optind==argc) { //this means all paras have been parsed. So lack of URL.
                       fprintf(stderr,"webbench: Missing URL!\n");
 		      usage();
 		      return 2;
@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
 	 "Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.\n"
 	 );
  //Five_comment: optind will point to the last value in argv.
- build_request(argv[optind]);
+ build_request(argv[optind]);// in here optind will point to the last para in argv, That is argv[optind]==URL
  /* print bench info */
  printf("\nBenchmarking: ");
  switch(method)
@@ -181,13 +181,13 @@ int main(int argc, char *argv[])
 		 printf("TRACE");break;
  }
  printf(" %s",argv[optind]);
- switch(http10)
+ switch(http10)// default using HTTP/1.0
  {
 	 case 0: printf(" (using HTTP/0.9)");break;
 	 case 2: printf(" (using HTTP/1.1)");break;
  }
  printf("\n");
- if(clients==1) printf("1 client");
+ if(clients==1) printf("1 client"); //default client count
  else
    printf("%d clients",clients);
 
@@ -243,9 +243,11 @@ void build_request(const char *url)
              exit(2);
            }
   /* protocol/host delimiter */
+  //Fivezh: url="http://www.baidu.com/"
+  //Fivezh: i=4+3=7
   i=strstr(url,"://")-url+3;
   /* printf("%d\n",i); */
-
+  //Fivezh: url+i=="www.baidu.com/"
   if(strchr(url+i,'/')==NULL) {
                                 fprintf(stderr,"\nInvalid URL syntax - hostname don't ends with '/'.\n");
                                 exit(2);

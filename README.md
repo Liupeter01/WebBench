@@ -6,6 +6,17 @@ Webbench是C语言开发的网站压测工具，性能良好, 推荐作为经典
 * 绘制程序流程图、函数调用关系图
 * 总结多进程模型等程序设计思想的优劣
 
+```
+five@master:~/github/openCode/WebBench$ ./webbench http://www.baidu.com/
+Webbench - Simple Web Benchmark 1.5
+Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.
+
+Benchmarking: GET http://www.baidu.com/
+1 client, running 30 sec.
+
+Speed=732 pages/min, 1211136 bytes/sec.
+Requests: 366 susceed, 0 failed.
+```
 
 # WebBench
 Webbench是一个在linux下使用的非常简单的网站压测工具。它使用fork()模拟多个客户端同时访问我们设定的URL，测试网站在压力下工作的性能，最多可以模拟3万个并发连接去测试网站的负载能力。Webbench使用C语言编写, 代码实在太简洁，源码加起来不到600行。
