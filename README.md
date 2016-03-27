@@ -5,6 +5,7 @@ Webbench是C语言开发的网站压测工具，性能良好, 推荐作为经典
 * 通读代码，增加部分注释信息
 * 绘制程序流程图、函数调用关系图
 * 总结多进程模型等程序设计思想的优劣
+
 完整的分析记录参见此文：[WebBench源码阅读](http://fivezh.github.io/2016/03/27/OpenCode-webbench-source-code-reading/)
 
 ```
