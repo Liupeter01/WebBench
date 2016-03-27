@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
    case 'p': 
 	     /* proxy server parsing server:port */
 	     tmp=strrchr(optarg,':');
-	     proxyhost=optarg;
+	     proxyhost=optarg;//xxxx:8080
 	     if(tmp==NULL)
 	     {
 		     break;
@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
 		     fprintf(stderr,"Error in option --proxy %s Port number is missing.\n",optarg);
 		     return 2;
 	     }
-	     *tmp='\0';
+	     *tmp='\0';// here will sepreate proxyhost and port
 	     proxyport=atoi(tmp+1);break;
    case ':':
    case 'h':
@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
 	 case METHOD_TRACE:
 		 printf("TRACE");break;
  }
- printf(" %s",argv[optind]);
+ printf(" %s",argv[optind]);// print request url
  switch(http10)// default using HTTP/1.0
  {
 	 case 0: printf(" (using HTTP/0.9)");break;
@@ -254,7 +254,7 @@ void build_request(const char *url)
                               }
   if(proxyhost==NULL)
   {
-   /* get port from hostname */
+   /* get port from host and port */
    if(index(url+i,':')!=NULL &&
       index(url+i,':')<index(url+i,'/'))
    {
@@ -262,19 +262,21 @@ void build_request(const char *url)
 	   bzero(tmp,10);
 	   strncpy(tmp,index(url+i,':')+1,strchr(url+i,'/')-index(url+i,':')-1);
 	   /* printf("tmp=%s\n",tmp); */
-	   proxyport=atoi(tmp);
+	   proxyport=atoi(tmp);//TODO: why here is proxyport?
 	   if(proxyport==0) proxyport=80;
    } else
    {
      strncpy(host,url+i,strcspn(url+i,"/"));
    }
    // printf("Host=%s\n",host);
+   // TODO: why here using request+strlen(request)?
    strcat(request+strlen(request),url+i+strcspn(url+i,"/"));
-  } else
+  } else // having proxyhost
   {
-   // printf("ProxyHost=%s\nProxyPort=%d\n",proxyhost,proxyport);
+    printf("ProxyHost=%s\nProxyPort=%d\n",proxyhost,proxyport);
    strcat(request,url);
   }
+  // detemine which http version
   if(http10==1)
 	  strcat(request," HTTP/1.0");
   else if (http10==2)
@@ -313,7 +315,7 @@ static int bench(void)
            return 1;
          }
   close(i);
-  /* create pipe */
+  /* create pipe *///Five_comment: pipe to communicate with processes
   if(pipe(mypipe))
   {
 	  perror("pipe failed.");
@@ -331,7 +333,7 @@ static int bench(void)
   /* fork childs */
   for(i=0;i<clients;i++)
   {
-	   pid=fork();
+	   pid=fork();//creating sub_process
 	   if(pid <= (pid_t) 0)
 	   {
 		   /* child process or error*/
@@ -379,7 +381,7 @@ static int bench(void)
           failed=0;
           bytes=0;
 
-	  while(1)
+	  while(1)   // calc sum of speed/failed/bytes
 	  {
 		  pid=fscanf(f,"%d %d %d",&i,&j,&k);
 		  if(pid<2)
@@ -401,7 +403,7 @@ static int bench(void)
 		  speed,
 		  failed);
   }
-  return i;
+  return i; //TODO: why return i ?
 }
 
 void benchcore(const char *host,const int port,const char *req)
@@ -432,8 +434,9 @@ void benchcore(const char *host,const int port,const char *req)
     }
     s=Socket(host,port);                          
     if(s<0) { failed++;continue;} 
+    // write the request to socket will send the request
     if(rlen!=write(s,req,rlen)) {failed++;close(s);continue;}
-    if(http10==0) 
+    if(http10==0) // TODO: why http0.9 will not get the response data?
 	    if(shutdown(s,1)) { failed++;close(s);continue;}
     if(force==0) 
     {
